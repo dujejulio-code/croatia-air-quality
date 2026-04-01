@@ -1,4 +1,4 @@
-# Croatia Air Quality Analysis (2019–2025)
+# Croatia Air Quality Analysis (2019-2025)
 
 > ⚠️ Raw data files (~700MB) are not included due to GitHub size limits. All SQL scripts, DAX measures, dashboard exports, and documentation are fully available.
 
@@ -6,7 +6,7 @@
 
 Analyzing 7 years of hourly air pollution and weather data across 6 Croatian cities to uncover when, where, and why air quality deteriorates.
 
-![Dashboard Preview][Wind Rose](screenshots/06_wind_rose.png)
+![Dashboard Preview](screenshots/06_wind_rose.png)
 
 ---
 
@@ -16,19 +16,19 @@ Analyzing 7 years of hourly air pollution and weather data across 6 Croatian cit
 This project transforms that raw data into an analytical platform that answers real questions:
 - **Which cities have the worst air?** Zagreb and Osijek dominate — driven by winter heating and continental geography
 - **When is it worst?** Winter months, weekday rush hours, and temperature inversions create pollution traps
-- **What drives it?** Temperature has the strongest correlation with PM2.5 (r = -0.28) — cold air literally traps pollution at ground level
-- **Did COVID change anything?** YES — NO₂ dropped during lockdown and never fully recovered, suggesting lasting behavioral shifts
+- **What drives it?** Temperature has the strongest correlation with PM2.5 (r = -0.28) - cold air literally traps pollution at ground level
+- **Did COVID change anything?** YES - NO₂ dropped during lockdown and never fully recovered, suggesting lasting behavioral shifts
 - **How long do pollution episodes last?** Zagreb winter episodes average 40+ hours above WHO thresholds, with some exceeding 300 hours
 
 ## Dashboard Pages
 
 | Page | What It Shows |
 |------|--------------|
-| **Seasonal Waterfall** | Side-by-side winter vs summer pollution "recipe" — which pollutants contribute most to bad air in each season |
+| **Seasonal Waterfall** | Side-by-side winter vs summer pollution "recipe" - which pollutants contribute most to bad air in each season |
 | **Temporal Patterns** | Day-of-week deviations, COVID impact on NO₂, and percentage of hours spent breathing unhealthy air by season |
 | **Heatmaps** | Matrix views: city × month, day × hour, and city × day-of-week showing AQI ratios — darker = worse air |
 | **Weather Sensitivity** | Scatter plots of PM2.5 vs temperature, wind speed, and wind shear with correlation analysis |
-| **Wind Rose** | Radar charts showing pollution levels and wind speed by cardinal direction — reveals which winds bring dirty air |
+| **Wind Rose** | Radar charts showing pollution levels and wind speed by cardinal direction - reveals which winds bring dirty air |
 | **Bubble Chart** | All pollutant-weather correlations in one view: x = correlation, y = slope, bubble size = R² |
 | **Survival Analysis** | Box plots of PM2.5 episode duration and city recovery time, with interactive threshold selector (20/25/50 µg/m³) |
 
@@ -90,22 +90,22 @@ The database uses a **galaxy schema** (two fact tables sharing dimension tables)
 ![Data Model](screenshots/data_model.png)
 
 **Fact Tables:**
-- `air_quality_fact` — ~8 million rows of hourly pollutant measurements (7 pollutants × 19 stations × 6 years)
-- `city_weather_fact` — ~400K rows of hourly weather observations (temperature, humidity, wind, pressure, cloud cover, radiation)
+- `air_quality_fact` - ~8 million rows of hourly pollutant measurements (7 pollutants × 19 stations × 6 years)
+- `city_weather_fact` - ~400K rows of hourly weather observations (temperature, humidity, wind, pressure, cloud cover, radiation)
 
 **Dimension Tables:**
-- `dim_date` — calendar with season, day-of-week, week/month numbering, COVID period flag
-- `dim_time` — 24 hours with time-of-day labels and rush hour flag
-- `dim_location` — 6 cities with coordinates
-- `dim_station` — 19 monitoring stations linked to cities
-- `dim_pollutant` — 7 pollutants with EAQI thresholds, units, source descriptions
-- `dim_aqi_category` — 5-level European AQI classification with color coding
+- `dim_date` - calendar with season, day-of-week, week/month numbering, COVID period flag
+- `dim_time` - 24 hours with time-of-day labels and rush hour flag
+- `dim_location` - 6 cities with coordinates
+- `dim_station` - 19 monitoring stations linked to cities
+- `dim_pollutant` - 7 pollutants with EAQI thresholds, units, source descriptions
+- `dim_aqi_category` - 5-level European AQI classification with color coding
 
 **Analytical Tables (built in SQL):**
-- `weather_statistics` — CORR() and REGR_SLOPE() for every pollutant × weather variable combination, with PERCENT_RANK() trimming to 1st–99th percentile
-- `pm25_episodes` — gaps-and-islands window function analysis identifying continuous PM2.5 exceedance episodes, peak values, duration, and recovery time
-- `wind_pollution` — cross-fact-table view joining air quality with wind direction data
-- `aqi_exceedance_profile` — percentage of hours in each AQI category by city and season
+- `weather_statistics` - CORR() and REGR_SLOPE() for every pollutant × weather variable combination, with PERCENT_RANK() trimming to 1st–99th percentile
+- `pm25_episodes` - gaps-and-islands window function analysis identifying continuous PM2.5 exceedance episodes, peak values, duration, and recovery time
+- `wind_pollution` - cross-fact-table view joining air quality with wind direction data
+- `aqi_exceedance_profile` - percentage of hours in each AQI category by city and season
 
 ---
 
@@ -154,7 +154,7 @@ croatia-air-quality/
 
 ## Key SQL Highlights
 
-### CROSS JOIN LATERAL — Unpivoting Wide to Long
+### CROSS JOIN LATERAL - Unpivoting Wide to Long
 
 The raw CSV files have one column per pollutant (wide format). The fact table needs one row per measurement (long format). `CROSS JOIN LATERAL` is the PostgreSQL way to do this efficiently:
 
@@ -169,7 +169,7 @@ CROSS JOIN LATERAL (
 ) AS unpivot (pollutant, measured_value);
 ```
 
-### Gaps-and-Islands — PM2.5 Episode Detection
+### Gaps-and-Islands - PM2.5 Episode Detection
 
 Identifying continuous pollution episodes requires detecting when consecutive hours stay above a threshold. The `LAG()` + cumulative `SUM()` pattern groups these into episodes:
 
@@ -216,7 +216,7 @@ FROM cleaned GROUP BY pollutant_short;
 ## Key DAX Measures
 
 ```dax
-// AQI Ratio — average measured value relative to the "Good" threshold
+// AQI Ratio - average measured value relative to the "Good" threshold
 // Values > 1.0 mean the city exceeded the Good limit on average
 Aqi Ratio = 
 AVERAGEX(
@@ -227,7 +227,7 @@ AVERAGEX(
     )
 )
 
-// Day-of-week deviation — how much each day deviates from the weekly mean
+// Day-of-week deviation - how much each day deviates from the weekly mean
 // Positive = dirtier than average, negative = cleaner
 Avg Measured Value / Day of Week = 
 VAR DayAvg = AVERAGE(air_quality_fact[measured_value])
@@ -253,7 +253,7 @@ CALCULATE(
 
 | Source | Description | Access |
 |--------|------------|--------|
-| **Croatian Environment Agency** | Hourly air quality measurements from 19 monitoring stations across Croatia (2019–2024) | [kvaliteta-zraka.hr](https://iszz.azo.hr/iskzl/podatakexp.htm) |
+| **Croatian Environment Agency** | Hourly air quality measurements from 19 monitoring stations across Croatia (2019-2024) | [kvaliteta-zraka.hr](https://iszz.azo.hr/iskzl/podatakexp.htm) |
 | **Open-Meteo Historical Weather API** | Hourly weather data (temperature, wind, humidity, pressure, cloud cover, radiation) for each city | [open-meteo.com](https://open-meteo.com/) |
 | **European AQI** | Air quality index classification thresholds and categories | [European Environment Agency](https://www.eea.europa.eu/themes/air/air-quality-index) |
 
@@ -262,11 +262,11 @@ CALCULATE(
 ## Key Findings
 
 1. **Zagreb and Osijek** consistently have the worst air quality, driven by continental climate (cold winters, low wind) and residential heating
-2. **Winter is 2–4× worse than summer** across all inland cities — PM2.5 is the dominant winter pollutant, while O3 dominates summer
+2. **Winter is 2-4× worse than summer** across all inland cities - PM2.5 is the dominant winter pollutant, while O3 dominates summer
 3. **Weekdays are dirtier than weekends** (CO and NO₂ deviate up to +8% on Fridays vs -18.6% on Sundays), confirming traffic as a major source
-4. **COVID lockdown permanently reduced NO₂** — levels dropped in March 2020 and post-COVID (2021–2024) averages never returned to 2019 levels
-5. **Temperature inversions trap pollution** — the negative correlation between temperature and PM2.5 (r = -0.28) reflects cold, stagnant air preventing pollutant dispersion
-6. **Wind is the best natural cleaner** — higher wind speed consistently correlates with lower pollution across all pollutants
+4. **COVID lockdown permanently reduced NO₂** - levels dropped in March 2020 and post-COVID (2021–2024) averages never returned to 2019 levels
+5. **Temperature inversions trap pollution** - the negative correlation between temperature and PM2.5 (r = -0.28) reflects cold, stagnant air preventing pollutant dispersion
+6. **Wind is the best natural cleaner** - higher wind speed consistently correlates with lower pollution across all pollutants
 7. **Coastal cities (Dubrovnik, Split, Vis)** enjoy naturally cleaner air due to sea breezes and milder winters
 
 ---
