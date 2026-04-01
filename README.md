@@ -14,7 +14,7 @@ Analyzing 7 years of hourly air pollution and weather data across 6 Croatian cit
 
 
 This project transforms that raw data into an analytical platform that answers real questions:
-- **Which cities have the worst air?** Zagreb and Osijek dominate — driven by winter heating and continental geography
+- **Which cities have the worst air?** Zagreb and Osijek dominate - driven by winter heating and continental geography
 - **When is it worst?** Winter months, weekday rush hours, and temperature inversions create pollution traps
 - **What drives it?** Temperature has the strongest correlation with PM2.5 (r = -0.28) - cold air literally traps pollution at ground level
 - **Did COVID change anything?** YES - NO₂ dropped during lockdown and never fully recovered, suggesting lasting behavioral shifts
@@ -26,7 +26,7 @@ This project transforms that raw data into an analytical platform that answers r
 |------|--------------|
 | **Seasonal Waterfall** | Side-by-side winter vs summer pollution "recipe" - which pollutants contribute most to bad air in each season |
 | **Temporal Patterns** | Day-of-week deviations, COVID impact on NO₂, and percentage of hours spent breathing unhealthy air by season |
-| **Heatmaps** | Matrix views: city × month, day × hour, and city × day-of-week showing AQI ratios — darker = worse air |
+| **Heatmaps** | Matrix views: city × month, day × hour, and city × day-of-week showing AQI ratios - darker = worse air |
 | **Weather Sensitivity** | Scatter plots of PM2.5 vs temperature, wind speed, and wind shear with correlation analysis |
 | **Wind Rose** | Radar charts showing pollution levels and wind speed by cardinal direction - reveals which winds bring dirty air |
 | **Bubble Chart** | All pollutant-weather correlations in one view: x = correlation, y = slope, bubble size = R² |
@@ -102,7 +102,7 @@ The database uses a **galaxy schema** (two fact tables sharing dimension tables)
 - `dim_aqi_category` - 5-level European AQI classification with color coding
 
 **Analytical Tables (built in SQL):**
-- `weather_statistics` - CORR() and REGR_SLOPE() for every pollutant × weather variable combination, with PERCENT_RANK() trimming to 1st–99th percentile
+- `weather_statistics` - CORR() and REGR_SLOPE() for every pollutant × weather variable combination, with PERCENT_RANK() trimming to 1st-99th percentile
 - `pm25_episodes` - gaps-and-islands window function analysis identifying continuous PM2.5 exceedance episodes, peak values, duration, and recovery time
 - `wind_pollution` - cross-fact-table view joining air quality with wind direction data
 - `aqi_exceedance_profile` - percentage of hours in each AQI category by city and season
